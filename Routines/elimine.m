@@ -1,30 +1,31 @@
-function [tilde_AA, tilde_LL] = elimine(AA, LL, Refneu)
+function [tilde_AA, tilde_LL] = elimine(AA, LL, Refneu,Coorneu,MM)
 nbpt=length(Refneu);
 tilde_AA=AA;
-tilde_LL=LL;
-lim=1;
-for i=1:nbpt
-    if Refneu(i)==0 && i<nbpt
-        for j=i+1:nbpt
-            if Refneu(j)==1
-                Refneu([i j])=Refneu([j i]);
-                tilde_AA([i j],:)=tilde_AA([j i],:);
-                tilde_AA(:,[i j])=tilde_AA(:,[j i]);
-                tilde_LL([i j])=tilde_LL([j i]);
-            end
-        end
-    end
-end
-for i=1:nbpt-1
-    if Refneu(i)~=0
-        lim=lim+1;
-    end
-end
+tilde_LL=zeros(nbpt,1);
+
+haut=find(Refneu~=1);
+bas=find(Refneu==1);
+ordre=[transpose(haut),transpose(bas)];
+
+%tilde_AA=AA(ordre,ordre);
+%tilde_LL=LL(ordre);
+
+lim = length(haut)+1;
 %for i=lim:nbpt
- %   tilde_LL(i)=0;
-    for j=1:nbpt
-        tilde_AA(i,j)=0;
-        tilde_AA(j,i)=0;
-    end
-    tilde_AA(i,i)=1;
+    %tilde_LL(i)=0;
+    %tilde_AA(i,:)=0;
+    %tilde_AA(:,i)=0;
+    %tilde_AA(i,i)=1;
+%end
+
+for i=1:length(bas)
+    tilde_LL(bas(i))=T_Gamma(Coorneu(bas(i),1),Coorneu(bas(i),2));
+    tilde_AA(bas(i),:)=0;
+    tilde_AA(:,bas(i))=0;
+    tilde_AA(bas(i),bas(i))=1;
 end
+tilde_LL=MM*tilde_LL(:);
+for i=1:length(haut)
+    tilde_LL(haut(i))=LL(haut(i));
+end
+tilde_LL

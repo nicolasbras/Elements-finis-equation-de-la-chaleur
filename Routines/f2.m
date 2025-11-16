@@ -1,9 +1,9 @@
-function val = sigma_2(x,y)
+function val = f(x,y)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% sigma_2 :
-% Evaluation de la fonction sigma_2.
+% f :
+% Evaluation de la fonction second membre.
 %
-% SYNOPSIS val = sigma_2(x,y)
+% SYNOPSIS val = f(x,y)
 %          
 % INPUT * x,y : les 2 coordonnees du point ou on veut evaluer la fonction.
 %
@@ -11,11 +11,11 @@ function val = sigma_2(x,y)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-val = (2+sin(16*pi*x))*(2+sin(16*pi*y))/4;
+val = 600*exp(-((x-5)/0.8)^2-((y-4)/0.8)^2);
 
 % A CHANGER POUR LA VALIDATION
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                                                     fin de la fonction
-%2024%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%2024%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%2025

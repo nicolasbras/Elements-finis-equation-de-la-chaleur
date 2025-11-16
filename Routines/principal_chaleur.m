@@ -32,20 +32,20 @@
 % ---------------------------------
 h = 0.05;
 system(['gmsh -2 -clmax ' num2str(h) ' -clmin ' num2str(h) ' geomChaleur.geo']);
-nom_maillage = 'geomRectangle.msh' ;
+nom_maillage = 'domaine.msh' ;
 
 validation = 'oui';
 pb_stationnaire = 'non';
 pb_temporel = 'non';
 
 if strcmp(validation,'oui')
-    alpha = 0;
+    alpha = 1;
     T_Gamma = 0;
 end
 
 if strcmp(pb_stationnaire,'oui')
-    alpha = 0;
-    T_Gamma = 0;
+    alpha = 1;
+    T_Gamma = 285;
 end
 
 if strcmp(pb_temporel,'oui')
@@ -92,11 +92,6 @@ for l=1:Nbtri
    end
 end % for l
 
-KK=KK+KK';
-MM=MM+MM';
-
-alpha=1;
-
 % Matrice EF
 % -------------------------
 AA = alpha*MM+KK;
@@ -109,9 +104,9 @@ AA = alpha*MM+KK;
 % -------------------------
 % A COMPLETER EN UTILISANT LA ROUTINE f.m
 for i=1:Nbpt
-    FF(i)=f(Coorneu(i,1),Coorneu(i,2));
+    FF(i)=f2(Coorneu(i,1),Coorneu(i,2));
 end
-LL = MM*transpose(FF);
+LL = MM*FF(:);
 
 % inversion
 % ----------
@@ -119,9 +114,8 @@ LL = MM*transpose(FF);
 % APRES PSEUDO_ELIMINATION 
 % ECRIRE LA ROUTINE elimine.m ET INSERER L APPEL A CETTE ROUTINE
 % A UN ENDROIT APPROPRIE
-[tilde_AA,tilde_LL]=elimine(AA,LL,Refneu);
+[tilde_AA,tilde_LL]=elimine(AA,LL,Refneu,Coorneu,MM);
 UU = tilde_AA\tilde_LL;
-
 TT = UU-T_Gamma;
 % validation
 % ----------
@@ -142,5 +136,5 @@ end
 % visualisation
 % -------------
 if ( strcmp(validation,'oui') || strcmp(pb_stationnaire,'oui') )
-    affiche(TT, Numtri, Coorneu, sprintf('Dirichlet - %s', nom_maillage));
+    affiche(UU, Numtri, Coorneu, sprintf('Dirichlet - %s', nom_maillage));
 end

@@ -11,7 +11,7 @@ function val = f(x,y)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-val = (1-10*pi*pi)*sin(3*pi*x)*sin(pi*y);
+val = (1+10*pi^2)*sin(3*pi*x)*sin(pi*y);
 
 % A CHANGER POUR LA VALIDATION
 

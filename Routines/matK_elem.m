@@ -31,7 +31,7 @@ norm(3, :) = [y1-y2, x2-x1];
 D = ((x2-x1)*(y3-y1) - (y2-y1)*(x3-x1));
 if (abs(D) <= eps) 
   error('l aire d un triangle est nulle!!!'); 
-end;
+end
 
 
 % calcul de la matrice de raideur
@@ -47,17 +47,21 @@ elseif Reftri==2
     %fonction matK_elem.m
 end
 
+B=[x2-x1 x3-x1;y2-y1 y3-y1];
 gphi=[-1 -1;1 0;0 1];
 det=(x2-x1)*(y3-y1)-(x3-x1)*(y2-y1);
-B=[y3-y1 y1-y2;x1-x3 y3-y1]/det;
+BTinv=[y3-y1 y1-y2;x1-x3 x2-x1]/det; %l'inversion et la transpoée sont appliquées
+A1=B*[1/6;1/6]+[x1;y1];
+A2=B*[2/3;1/6]+[x1;y1];
+A3=B*[1/6;2/3]+[x1;y1]; % quadrature à 3 points de Gauss Legendre
 
 Kel = zeros(3,3);
 for i=1:3
   for j=1:3
 	% A COMPLETER
-    Kel(i,j) = (sigma(1/6,1/6)+sigma(2/3,1/6)+sigma(1/6,2/3))*dot(B*transpose(gphi(i,:)),B*transpose(gphi(j,:)))*abs(det)/6;
-  end; % j
-end; % i
+    Kel(i,j) = (sigma(A1(1),A1(2))+sigma(A2(1),A2(2))+sigma(A3(1),A3(2)))*dot(BTinv*transpose(gphi(i,:)),BTinv*transpose(gphi(j,:)))*abs(det)/6;
+  end % j
+end % i
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                                                        fin de la routine
