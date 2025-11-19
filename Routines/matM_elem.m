@@ -32,12 +32,16 @@ end;
 % calcul de la matrice de masse
 % -----------------------------
 Mel = zeros(3,3);
-Mel = zeros(3,3);
 for i=1:3
 	for j=1:3
-		Mel(i,j) = (1+kron(i,j))*abs(D)/24;
-	end % j
-end % i
+		if i==j
+      Mel(i,j) = (1/12)*abs(D) ;
+    else
+       Mel(i,j) = (1/24)*abs(D) ;
+        end
+	end; % j
+end; % i
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                                                        fin de la routine

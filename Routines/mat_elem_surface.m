@@ -28,6 +28,17 @@ Long = sqrt((x2-x1)^2+(y2-y1)^2);
 %---------------------------------------------------
 Sel = zeros(2,2);
 	% A COMPLETER
+if ref==1
+  for i=1:2
+	  for j=1:2
+		  if i==j
+        Sel(i,j) = (1/12)*abs(Long) ;
+          else
+        Sel(i,j) = (1/24)*abs(Long) ;
+          end
+	 end; % j
+  end
+end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                                                        fin de la routine

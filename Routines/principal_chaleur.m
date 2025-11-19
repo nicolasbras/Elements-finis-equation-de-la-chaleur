@@ -32,7 +32,7 @@
 % ---------------------------------
 h = 0.05;
 system(['gmsh -2 -clmax ' num2str(h) ' -clmin ' num2str(h) ' geomChaleur.geo']);
-nom_maillage = 'domaine.msh' ;
+nom_maillage = 'geomRectangle.msh' ;
 
 validation = 'oui';
 pb_stationnaire = 'non';
@@ -103,9 +103,11 @@ AA = alpha*MM+KK;
 % Calcul du second membre F
 % -------------------------
 % A COMPLETER EN UTILISANT LA ROUTINE f.m
+FF=zeros(Nbpt,1);
 for i=1:Nbpt
-    FF(i)=f2(Coorneu(i,1),Coorneu(i,2));
+     FF(i)=f(Coorneu(i,1),Coorneu(i,2));
 end
+
 LL = MM*FF(:);
 
 % inversion
@@ -114,8 +116,21 @@ LL = MM*FF(:);
 % APRES PSEUDO_ELIMINATION 
 % ECRIRE LA ROUTINE elimine.m ET INSERER L APPEL A CETTE ROUTINE
 % A UN ENDROIT APPROPRIE
-[tilde_AA,tilde_LL]=elimine(AA,LL,Refneu,Coorneu,MM);
+[tilde_AA,tilde_LL]=elimine(AA,LL,Refneu,Coorneu);
+
+bord=zeros(Nbpt,1);
+for i=1:Nbpt
+        bord(i)=T_Gamma_fonction(Coorneu(i,1),Coorneu(i,2));
+end
+BORD=MM*bord(:);
+for i=1:Nbpt
+    if Refneu(i)==1
+        tilde_LL(i)=BORD(i);
+    end
+end
+
 UU = tilde_AA\tilde_LL;
+
 TT = UU-T_Gamma;
 % validation
 % ----------
@@ -132,6 +147,66 @@ if strcmp(validation,'oui')
     erreurH1=sqrt(transpose(UU_exact-UU)*KK*(UU_exact-UU))
 	% attention de bien changer le terme source (dans FF)
 end
+
+% =====================================================
+% =====================================================
+% Pour le probleme temporel
+% ---------------------------------
+if strcmp(pb_temporel,'oui')
+
+    % on initialise la condition initiale
+    % -----------------------------------
+    T_initial = condition_initiale(Coorneu(:,1),Coorneu(:,2));
+
+	% solution a t=0
+	% --------------
+    UU = 310*ones(Nbpt,1);
+    TT = 310*ones(Nbpt,1);
+
+    % visualisation
+    % -------------
+    figure;
+    hold on;
+    affiche(TT, Numtri, Coorneu, ['Temps = ', num2str(0)]);
+    axis([min(Coorneu(:,1)),max(Coorneu(:,1)),min(Coorneu(:,2)),max(Coorneu(:,2)),...
+        290,330,290,300]);
+    hold off;
+
+	% Boucle sur les pas de temps
+	% ---------------------------
+    for k = 1:N_t
+        LL_k = zeros(Nbpt,1);
+        S=zeros(Nbpt,1);
+        for i = 1:Nbpt
+            x=Coorneu(i,1);
+            y=Coorneu(i,2);
+            S(i,1) =  f_t(x,y,k);
+        end
+        
+        % Calcul du second membre F a l instant k*delta t
+        % -----------------------------------------------
+		% A COMPLETER EN UTILISANT LA ROUTINE f_t.m et le ou les termes precedents (donne par UU)
+		LL_k = MM*UU/delta_t+MM*S;
+
+		% inversion
+		% ----------
+		% Calculer la matrice intervenant dans le schema, 
+		% faire la pseudo elimintaion si nécessaire 
+        UU = tilde_AA\tilde_LL_k;
+        TT = UU-T_Gamma;
+
+        % visualisation 
+        pause(0.05)
+        affiche(TT, Numtri, Coorneu, ['Temps = ', num2str(k*delta_t)]);
+        axis([min(Coorneu(:,1)),max(Coorneu(:,1)),min(Coorneu(:,2)),max(Coorneu(:,2)),...
+            290,330,290,320]);
+    end
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                        fin de la routine
+%2024%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%2025
+
 
 % visualisation
 % -------------
